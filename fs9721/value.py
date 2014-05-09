@@ -79,9 +79,13 @@ class DmmValue(object):
 
     def createMeasurementObject(self):
         try:
+            if self.scale:
+                unit = MeasureBase.SI_PREFIXES[self.scale] + self.measurement
+            else:
+                unit = self.measurement
             return (
                 self.MEASURE_CLASSES[self.measurement](
-                    **{self.measurement: self.numericVal}
+                    **{unit: self.numericValUnscaled}
                 )
             )
         except KeyError:
@@ -157,6 +161,7 @@ class DmmValue(object):
         if n is not None:
             # this should remove leading zeros, spaces etc.
             self.val = '%s' % (n, )
+            self.numericValUnscaled = n
             self.numericVal = n * self.multiplier
 
     def __repr__(self):

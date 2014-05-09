@@ -49,10 +49,12 @@ def main():
                 if args.json:
                     if isinstance(val, MeasureBase):
                         measurement = {
+                            'measure': val.__class__.__name__,
                             'text': str(val),
                             'unit': val.unit,
                             'value': val.value,
-                            'measure': val.__class__.__name__
+                            'standard_value': val.standard,
+                            'standard_unit': val.STANDARD_UNIT
                         }
                     else:
                         measurement = {
