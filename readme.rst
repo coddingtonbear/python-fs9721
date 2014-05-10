@@ -31,7 +31,7 @@ Then, you can gather measurements from your multimeter using::
 Command-Line Use
 ----------------
 
-Just run::
+For basic use, just run::
 
     fs9721 /path/to/serial/port
 
@@ -40,6 +40,24 @@ at ``/dev/tty.usbserial``, for me to gather measurements directly from
 the multimeter, I would run::
 
     fs9721 /dev/tty.usbserial
+
+Command-Line Options
+~~~~~~~~~~~~~~~~~~~~
+
+* ``--timeout=3.0``: Number of seconds to wait before timing out when
+  communicating with the multimeter.  Default: 3 seconds.
+* ``--retries=COUNT``: Number of times to retry after failing to communicate
+  with the multimeter.
+* ``--format=FORMAT``: One of ``json``, ``csv``, or ``text`` (defaulting to
+  ``text``) corresponding with the format in which you would like the data
+  formatted.
+* ``--file=PATH``: Rather than writing the output to the console via stdout,
+  write file to the specified file.
+* ``--raise``: Due to the relative commonness of errors in communication with
+  the multimeter, communication errors are suppressed by default.  Use this
+  option to raise exceptions for errors that occur.
+* ``-show-null``: Null measurements from the multimeter are suppressed by
+  default, use this option to display null measurements when they are returned.
 
 Does this support my multimeter?
 --------------------------------

@@ -195,7 +195,7 @@ class Client(object):
         ],
         12: [
             ('measure', 'F'),
-            ('measure', 'Ω'),
+            ('measure', 'ohm'),
             ('flags', 'REL delta'),
             ('flags', 'Hold')
         ],

@@ -46,7 +46,7 @@ class DmmValue(object):
         # Duty Cycle?
         # Diode?
         'F': Capacitance,
-        'Ω': Resistance,
+        'ohm': Resistance,
         'A': Current,
         'V': Voltage,
         'Hz': Frequency,
@@ -145,6 +145,7 @@ class DmmValue(object):
     def processVal(self):
         v = self.rawVal
         self.numericVal = None
+        self.numericValUnscaled = None
         if 'X' in v:
             self.saneValue = False
             return

@@ -1,13 +1,10 @@
 from __future__ import print_function
 
-import base64
-import json
-
-from measurement.base import MeasureBase
 import argparse
 import six
 
 from .client import Client
+from .formatters import registered_formatters
 
 
 def main():
@@ -16,72 +13,59 @@ def main():
     )
     parser.add_argument('port', nargs=1, type=six.text_type)
     parser.add_argument(
-        '--timeout', '-t', type=float, dest='timeout', default=3.0
+        '--timeout', type=float, dest='timeout', default=3.0
     )
     parser.add_argument(
-        '--retries', '-r', type=int, dest='retries', default=3
+        '--retries', type=int, dest='retries', default=3
     )
     parser.add_argument(
-        '--raise', '-f', default=False, action='store_true', dest='fail',
+        '--raise', default=False, action='store_true', dest='raise_err',
         help=(
             'Raise exceptions when errors are encountered while '
             'gathering measurements.'
         )
     )
     parser.add_argument(
-        '--show-null', '-n', default=False, action='store_true', dest='null',
+        '--show-null', default=False, action='store_true', dest='null',
         help=(
             'Display null measurements.'
         )
     )
     parser.add_argument(
-        '--json', '-j', default=False, action='store_true', dest='json',
+        '--format', '-f', default='text', dest='format', type=six.text_type
+    )
+    parser.add_argument(
+        '--file', '-o', default=None, dest='outfile', type=six.text_type
     )
     args = parser.parse_args()
 
     dmm = Client(port=args.port[0], retries=args.retries, timeout=args.timeout)
 
+    formatter = registered_formatters[args.format]
+    idx = 0
+    if args.outfile:
+        outfile = open(args.outfile, 'w')
     while True:
         try:
             response = dmm.read()
             val = response.getMeasurement()
             if val is not None or args.null:
-                if args.json:
-                    if isinstance(val, MeasureBase):
-                        measurement = {
-                            'measure': val.__class__.__name__,
-                            'text': str(val),
-                            'unit': val.unit,
-                            'value': val.value,
-                            'standard_value': val.standard,
-                            'standard_unit': val.STANDARD_UNIT
-                        }
+                for line in formatter(idx, response, val):
+                    if args.outfile:
+                        outfile.write(line)
+                        outfile.write('\n')
                     else:
-                        measurement = {
-                            'value': val,
-                        }
-                    print(
-                        json.dumps(
-                            {
-                                'raw_value': response.rawVal,
-                                'flags': response.flags,
-                                'raw_bytes': (
-                                    base64.b64encode(response.rawBytes)
-                                ),
-                                'scale_flags': response.scaleFlags,
-                                'measurement_flags': response.measurementFlags,
-                                'reserved_flags': response.reservedFlags,
-                                'measurement': measurement,
-                            }
-                        )
-                    )
-                else:
-                    print(val)
+                        print(line)
+                idx += 1
         except (KeyboardInterrupt, SystemExit):
+            if args.outfile:
+                outfile.close()
             raise
         except:
-            if args.fail:
+            if args.raise_err:
                 raise
+    if args.outfile:
+        outfile.close()
 
 # main hook
 if __name__ == "__main__":
