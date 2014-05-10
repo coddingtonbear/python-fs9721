@@ -50,13 +50,15 @@ def main():
             response = dmm.read()
             val = response.getMeasurement()
             if val is not None or args.null:
-                for line in formatter(idx, response, val):
+                lines = formatter(idx, response, val)
+                for line in lines:
                     if args.outfile:
                         outfile.write(line)
                         outfile.write('\n')
                     else:
                         print(line)
-                idx += 1
+                if lines:
+                    idx += 1
         except (KeyboardInterrupt, SystemExit):
             if args.outfile:
                 outfile.close()
