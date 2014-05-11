@@ -37,7 +37,7 @@ def main():
     parser.add_argument(
         '--file', '-o', default=None, dest='outfile', type=six.text_type
     )
-    args = parser.parse_args()
+    args, extra = parser.parse_known_args()
 
     dmm = Client(port=args.port[0], retries=args.retries, timeout=args.timeout)
 
@@ -50,7 +50,7 @@ def main():
             response = dmm.read()
             val = response.getMeasurement()
             if val is not None or args.null:
-                lines = formatter(idx, response, val)
+                lines = formatter(idx, response, val, extra=extra)
                 for line in lines:
                     if args.outfile:
                         outfile.write(line)

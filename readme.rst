@@ -58,6 +58,41 @@ Command-Line Options
   option to raise exceptions for errors that occur.
 * ``-show-null``: Null measurements from the multimeter are suppressed by
   default, use this option to display null measurements when they are returned.
+* ``-separator``: Separator to use for CSV formatter.  Defaults to ','','.
+
+Command-Line Examples
+~~~~~~~~~~~~~~~~~~~~~
+
+The following examples all assume that your device is connected to
+``/dev/mydevice``.
+
+* Write output to console in the simple text format::
+
+  fs9721 /dev/mydevice
+
+* Write output to console in CSV (comma-separated values) format::
+
+  fs9721 --format=csv /dev/mydevice
+
+* Write output to the console in tab-delimited format::
+
+  fs9721 --format=csv --separator=$'\t' /dev/mydevice
+
+* Write output to file at ``/tmp/myoutput.tdv.csv`` in tab-delimited format::
+
+  fs9721 --format=csv --file=/tmp/myoutput.tdv.csv --separator=$'\t' /dev/mydevice
+
+* Write output to console in JSON format::
+
+  fs9721 --format=json /dev/mydevice
+
+.. note::
+
+   If you aren't familiar with the ``$'\t'`` notation: when preceding a string
+   with a dollar sign symbol, you are instructing Bash (assuming you are using
+   Bash as your shell) to convert the basckslash notation into the actual
+   character the backslash notation refers to.  For more information, please consult
+   `this article on Stack Overflow <http://stackoverflow.com/questions/14251307/can-i-pass-t-to-python-from-the-command-line>`_.
 
 Does this support my multimeter?
 --------------------------------

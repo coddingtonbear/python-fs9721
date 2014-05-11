@@ -2,6 +2,9 @@ import datetime
 import base64
 from json import dumps as json_dumps
 
+import argparse
+import six
+
 from measurement.base import MeasureBase
 import six
 
@@ -16,7 +19,7 @@ def register_formatter(fn):
 
 
 @register_formatter
-def json(idx, reading, val):
+def json(idx, reading, val, extra=None):
     if not val:
         return ''
     if isinstance(val, MeasureBase):
@@ -52,11 +55,17 @@ def json(idx, reading, val):
 
 
 @register_formatter
-def csv(idx, reading, val):
+def csv(idx, reading, val, extra=None):
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '--separator', type=six.text_type, dest='separator', default=','
+    )
+    args, _ = parser.parse_known_args(extra)
+
     lines = []
     if idx == 0:
         lines.append(
-            ','.join([
+            args.separator.join([
                 'Index',
                 'Timestamp',
                 'Value',
@@ -111,10 +120,12 @@ def csv(idx, reading, val):
             ';'.join(reading.reservedFlags),
         ]
     )
-    lines.append(','.join([six.text_type(v).encode('utf-8') for v in cols]))
+    lines.append(
+        args.separator.join([six.text_type(v).encode('utf-8') for v in cols])
+    )
     return lines
 
 
 @register_formatter
-def text(idx, reading, val):
+def text(idx, reading, val, extra=None):
     return [val]
