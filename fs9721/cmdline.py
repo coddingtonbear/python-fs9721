@@ -32,6 +32,12 @@ def main():
         )
     )
     parser.add_argument(
+        '--single', default=False, action='store_true', dest='single',
+        help=(
+            'Display only a single measurement and exit.'
+        )
+    )
+    parser.add_argument(
         '--format', '-f', default='text', dest='format', type=six.text_type
     )
     parser.add_argument(
@@ -59,6 +65,8 @@ def main():
                         print(line)
                 if lines:
                     idx += 1
+                    if args.single:
+                        break
         except (KeyboardInterrupt, SystemExit):
             if args.outfile:
                 outfile.close()
